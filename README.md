@@ -6,9 +6,9 @@
 
 [JSON Schema](http://json-schema.org/) middleware for [Redux](https://redux.js.org/).
 
-# Usage
+## Usage
 
-## Configuration
+### Configuration
 
 Provide a configuration object when creating the middleware:
 
@@ -16,15 +16,80 @@ Provide a configuration object when creating the middleware:
 import createMiddleware from 'redux-json-schema-middleware';
 const middleware = createMiddleware({
   actionSchema: { },
-  fluxStandardAction: false
+  fluxStandardAction: false,
+  perActionSchemas: { },
+  storeSchema: { }
 });
 ```
 
-### `actionSchema`
+#### `actionSchema`
 
 A JSON schema that will be used to validate all actions dispatched to the store.
 
-### `fluxStandardAction`
+```javascript
+{
+  actionSchema: {
+    type: 'object',
+    required: ['type', 'timestamp'],
+    properties: {
+      type: { type: 'string' },
+      timestamp: { type: 'integer' }
+    },
+    additionalProperties: false
+  }
+}
+```
+
+#### `fluxStandardAction`
 
 Whether actions should be checked for
 [FSA](https://github.com/acdlite/flux-standard-action) compliance.
+
+```javascript
+{
+  fluxStandardAction: true
+}
+```
+
+#### `perActionSchemas`
+
+Schemas to be used to validate different types of actions, e.g.:
+
+```javascript
+{
+  perActionSchemas: {
+    ADD_TODO: {
+      type: 'object',
+      required: ['text'],
+      properties: {
+        text: {
+          type: 'string',
+          minLength: 1
+        }
+      },
+      additionalProperties: false
+    },
+    TOGGLE_TODO: {
+      type: 'object',
+      required: ['index'],
+      properties: {
+        index: {
+          type: 'integer',
+          minimum: 1
+        }
+      },
+      additionalProperties: false
+    },
+    SET_VISIBILITY_FILTER: {
+      type: 'object',
+      required: ['filter'],
+      properties: {
+        filter: {
+          type: 'string',
+          enum: ['SHOW_ALL', 'SHOW_ACTIVE', 'SHOW_COMPLETED']
+        }
+      }
+    }
+  }
+}
+```

@@ -3,13 +3,14 @@ import Ajv from 'ajv';
 import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
 const middlewareConfig = {
-  actionSchema: { }
+  actionSchema: { },
+  perActionSchemas: { }
 };
 
 export default (config = { }) => {
   const ajv = new Ajv();
 
-  ['actionSchema'].forEach(key => {
+  ['actionSchema', 'perActionSchemas'].forEach(key => {
     if (config[key]) {
       middlewareConfig[key] = config[key];
     }
@@ -18,6 +19,10 @@ export default (config = { }) => {
   ajv.addSchema(standardActionSchema, 'standardActionSchema');
   ajv.addSchema(fluxStandardActionSchema, 'fluxStandardActionSchema');
   ajv.addSchema(middlewareConfig.actionSchema, 'actionSchema');
+
+  for (let type in config.perActionSchemas) {
+    ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
+  }
 
   return store => next => action => {
     if (config.fluxStandardAction) {
@@ -32,6 +37,12 @@ export default (config = { }) => {
 
     if (!ajv.validate('actionSchema', action)) {
       throw new Error(ajv.errorsText(ajv.errors));
+    }
+
+    if (middlewareConfig.perActionSchemas[action.type]) {
+      if (!ajv.validate(`action/${action.type}`, action)) {
+        throw new Error(ajv.errorsText(ajv.errors));
+      }
     }
 
     return next(action);
