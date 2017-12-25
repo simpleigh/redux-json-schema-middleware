@@ -1,4 +1,4 @@
-import createMiddleware from './index';
+import createMiddleware from '.';
 
 describe('middleware', () => {
   it('exists', () => {
@@ -7,7 +7,7 @@ describe('middleware', () => {
 
   it('calls next with the provided action', () => {
     const next = jest.fn();
-    const action = { };
+    const action = { type: 'test' };
 
     createMiddleware()(undefined)(next)(action);
 
@@ -18,9 +18,10 @@ describe('middleware', () => {
 
   it('returns the result of calling next with the provided action', () => {
     const next = jest.fn();
+    const action = { type: 'test' };
     const result = { };
     next.mockReturnValue(result);
 
-    expect(createMiddleware()(undefined)(next)(undefined)).toBe(result);
+    expect(createMiddleware()(undefined)(next)(action)).toBe(result);
   });
 });
