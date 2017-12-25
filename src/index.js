@@ -1,6 +1,6 @@
 import Ajv from 'ajv';
 
-import { standardActionSchema } from './defaults';
+import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
 const middlewareConfig = {
   actionSchema: { }
@@ -16,12 +16,20 @@ export default (config = { }) => {
   });
 
   ajv.addSchema(standardActionSchema, 'standardActionSchema');
+  ajv.addSchema(fluxStandardActionSchema, 'fluxStandardActionSchema');
   ajv.addSchema(middlewareConfig.actionSchema, 'actionSchema');
 
   return store => next => action => {
-    if (!ajv.validate('standardActionSchema', action)) {
-      throw new Error(ajv.errorsText(ajv.errors));
+    if (config.fluxStandardAction) {
+      if (!ajv.validate('fluxStandardActionSchema', action)) {
+        throw new Error(ajv.errorsText(ajv.errors));
+      }
+    } else {
+      if (!ajv.validate('standardActionSchema', action)) {
+        throw new Error(ajv.errorsText(ajv.errors));
+      }
     }
+
     if (!ajv.validate('actionSchema', action)) {
       throw new Error(ajv.errorsText(ajv.errors));
     }

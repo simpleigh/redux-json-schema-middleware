@@ -15,6 +15,16 @@ Provide a configuration object when creating the middleware:
 ```javascript
 import createMiddleware from 'redux-json-schema-middleware';
 const middleware = createMiddleware({
-  actionSchema: { }  // Schema that will be used to validate all actions
+  actionSchema: { },
+  fluxStandardAction: false
 });
 ```
+
+### `actionSchema`
+
+A JSON schema that will be used to validate all actions dispatched to the store.
+
+### `fluxStandardAction`
+
+Whether actions should be checked for
+[FSA](https://github.com/acdlite/flux-standard-action) compliance.
