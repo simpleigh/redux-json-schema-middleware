@@ -14,6 +14,13 @@ const middlewareConfig = {
 
 export default (config = { }) => {
   const ajv = new Ajv();
+
+  ['actionsSchema'].forEach(key => {
+    if (config[key]) {
+      middlewareConfig[key] = config[key];
+    }
+  });
+
   ajv.addSchema(middlewareConfig.actionsSchema, 'actions');
 
   return store => next => action => {

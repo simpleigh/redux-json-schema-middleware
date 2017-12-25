@@ -35,4 +35,18 @@ describe('actions schema', () => {
       createMiddleware()(undefined)(undefined)({ type: { } });
     }).toThrow(/data\.type should be string/);
   });
+
+  it('allows the schema to be overridden', () => {
+    const config = {
+      actionsSchema: {
+        type: 'object',
+        required: ['type', 'required']
+      }
+    };
+    const action = { type: 'test' };
+
+    expect(() => {
+      createMiddleware(config)(undefined)(undefined)(action);
+    }).toThrow(/data should have required property '\.required'/);
+  });
 });
