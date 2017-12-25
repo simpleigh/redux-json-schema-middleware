@@ -7,10 +7,8 @@ export default (config = { }) => {
 
   ajv.addSchema(standardActionSchema, 'standardActionSchema');
   ajv.addSchema(fluxStandardActionSchema, 'fluxStandardActionSchema');
-
-  if (config.actionSchema) {
-    ajv.addSchema(config.actionSchema, 'actionSchema');
-  }
+  ajv.addSchema(config.actionSchema || { }, 'actionSchema');
+  ajv.addSchema(config.storeSchema || { }, 'storeSchema');
 
   for (let type in config.perActionSchemas) {
     ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
@@ -35,6 +33,10 @@ export default (config = { }) => {
       if (!ajv.validate(`action/${action.type}`, action)) {
         throw new Error(ajv.errorsText(ajv.errors));
       }
+    }
+
+    if (config.storeSchema && !ajv.validate('storeSchema', store.getState())) {
+      throw new Error(ajv.errorsText(ajv.errors));
     }
 
     return next(action);

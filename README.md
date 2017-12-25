@@ -93,3 +93,40 @@ Schemas to be used to validate different types of actions, e.g.:
   }
 }
 ```
+
+#### `storeSchema`
+
+A schema that will be used to validate the store itself.
+
+```javascript
+{
+  storeSchema: {
+    type: 'object',
+    required: ['visibilityFilter', 'todos'],
+    properties: {
+      visibilityFilter: {
+        type: 'string',
+        enum: ['SHOW_ALL', 'SHOW_ACTIVE', 'SHOW_COMPLETED']
+      },
+      todos: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: ['text', 'completed'],
+          properties: {
+            text: {
+              type: 'string',
+              minLength: 1
+            },
+            completed: {
+              type: 'boolean'
+            }
+          },
+          additionalProperties: false
+        }
+      }
+    },
+    additionalProperties: false
+  }
+}
+```
