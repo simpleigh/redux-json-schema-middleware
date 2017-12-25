@@ -5,3 +5,16 @@
 [![Issues](https://img.shields.io/github/issues/simpleigh/redux-json-schema-middleware.svg)](https://github.com/simpleigh/redux-json-schema-middleware/issues)
 
 [JSON Schema](http://json-schema.org/) middleware for [Redux](https://redux.js.org/).
+
+# Usage
+
+## Configuration
+
+Provide a configuration object when creating the middleware:
+
+```javascript
+import createMiddleware from 'redux-json-schema-middleware';
+const middleware = createMiddleware({
+  actionsSchema: { }  // Schema that will be used to validate all actions
+});
+```
