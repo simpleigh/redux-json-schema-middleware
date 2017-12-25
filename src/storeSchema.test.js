@@ -1,4 +1,5 @@
 import createMiddleware from '.';
+import { createStore, noopNext, testAction } from './testUtils';
 
 const middleware = createMiddleware({
   storeSchema: {
@@ -8,18 +9,14 @@ const middleware = createMiddleware({
 
 describe('store schema', () => {
   it('allows valid stores', () => {
-    const store = { getState: () => ({ }) };
-    const next = () => { };
     expect(() => {
-      middleware(store)(next)({ type: 'test' });
+      middleware(createStore({ }))(noopNext)(testAction);
     }).not.toThrow();
   });
 
   it('raises an error for invalid stores', () => {
-    const store = { getState: () => 'notobject' };
-    const next = () => { };
     expect(() => {
-      middleware(store)(next)({ type: 'test' });
+      middleware(createStore('notobject'))(noopNext)(testAction);
     }).toThrow(/data should be object/);
   });
 });

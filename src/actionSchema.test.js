@@ -1,12 +1,11 @@
 import createMiddleware from '.';
+import { emptyStore, noopNext, testAction } from './testUtils';
 
 describe('action schema', () => {
   it('can be added to the middleware', () => {
     const config = { actionSchema: { type: 'object', required: ['required'] } };
-    const action = { type: 'test' };
-
     expect(() => {
-      createMiddleware(config)(undefined)(undefined)(action);
+      createMiddleware(config)(emptyStore)(noopNext)(testAction);
     }).toThrow(/data should have required property '\.required'/);
   });
 });
