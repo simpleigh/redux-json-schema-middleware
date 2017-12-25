@@ -1,13 +1,11 @@
 import createMiddleware from '.';
 
-const middleware = createMiddleware();
-
 describe('actions schema', () => {
   it('calls next with valid actions', () => {
     const next = jest.fn();
     const action = { type: 'action' };
 
-    middleware(undefined)(next)(action);
+    createMiddleware()(undefined)(next)(action);
 
     expect(next.mock.calls.length).toBe(1);
     expect(next.mock.calls[0].length).toBe(1);
@@ -15,12 +13,26 @@ describe('actions schema', () => {
   });
 
   it('raises an error for invalid actions', () => {
-    expect(() => { middleware(undefined)(undefined)('notaction') }).toThrow();
+    expect(() => {
+      createMiddleware()(undefined)(undefined)(undefined);
+    }).toThrow();
   });
 
-  it('includes validation information in the error', () => {
-    expect(() => { middleware(undefined)(undefined)('notaction') }).toThrow(
-      /data should be object/
-    );
+  it('expects actions to be objects', () => {
+    expect(() => {
+      createMiddleware()(undefined)(undefined)('notaction');
+    }).toThrow(/data should be object/);
+  });
+
+  it('expects actions to have a type', () => {
+    expect(() => {
+      createMiddleware()(undefined)(undefined)({ test: 'test' });
+    }).toThrow(/data should have required property 'type'/);
+  });
+
+  it('expects the type to be a string', () => {
+    expect(() => {
+      createMiddleware()(undefined)(undefined)({ type: { } });
+    }).toThrow(/data\.type should be string/);
   });
 });
