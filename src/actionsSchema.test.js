@@ -17,4 +17,10 @@ describe('actions schema', () => {
   it('raises an error for invalid actions', () => {
     expect(() => { middleware(undefined)(undefined)('notaction') }).toThrow();
   });
+
+  it('includes validation information in the error', () => {
+    expect(() => { middleware(undefined)(undefined)('notaction') }).toThrow(
+      /data should be object/
+    );
+  });
 });

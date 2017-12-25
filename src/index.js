@@ -18,7 +18,7 @@ export default (config = { }) => {
 
   return store => next => action => {
     if (!ajv.validate('actions', action)) {
-      throw new Error();
+      throw new Error(ajv.errorsText(ajv.errors));
     }
 
     return next(action);
