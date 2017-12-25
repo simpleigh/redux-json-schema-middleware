@@ -1,15 +1,15 @@
-import middleware from './index';
+import createMiddleware from './index';
 
 describe('middleware', () => {
   it('exists', () => {
-    expect(middleware).toBeDefined();
+    expect(createMiddleware()).toBeDefined();
   });
 
   it('calls next with the provided action', () => {
     const next = jest.fn();
     const action = { };
 
-    middleware(undefined)(next)(action);
+    createMiddleware()(undefined)(next)(action);
 
     expect(next.mock.calls.length).toBe(1);
     expect(next.mock.calls[0].length).toBe(1);
@@ -21,6 +21,6 @@ describe('middleware', () => {
     const result = { };
     next.mockReturnValue(result);
 
-    expect(middleware(undefined)(next)(undefined)).toBe(result);
+    expect(createMiddleware()(undefined)(next)(undefined)).toBe(result);
   });
 });
