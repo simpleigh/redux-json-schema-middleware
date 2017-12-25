@@ -1,17 +1,6 @@
 import createMiddleware from '.';
 
-describe('actions schema', () => {
-  it('calls next with valid actions', () => {
-    const next = jest.fn();
-    const action = { type: 'action' };
-
-    createMiddleware()(undefined)(next)(action);
-
-    expect(next.mock.calls.length).toBe(1);
-    expect(next.mock.calls[0].length).toBe(1);
-    expect(next.mock.calls[0][0]).toBe(action);
-  });
-
+describe('standard action schema', () => {
   it('raises an error for invalid actions', () => {
     expect(() => {
       createMiddleware()(undefined)(undefined)(undefined);
@@ -34,19 +23,5 @@ describe('actions schema', () => {
     expect(() => {
       createMiddleware()(undefined)(undefined)({ type: { } });
     }).toThrow(/data\.type should be string/);
-  });
-
-  it('allows the schema to be overridden', () => {
-    const config = {
-      actionsSchema: {
-        type: 'object',
-        required: ['type', 'required']
-      }
-    };
-    const action = { type: 'test' };
-
-    expect(() => {
-      createMiddleware(config)(undefined)(undefined)(action);
-    }).toThrow(/data should have required property '\.required'/);
   });
 });

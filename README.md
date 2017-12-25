@@ -15,6 +15,6 @@ Provide a configuration object when creating the middleware:
 ```javascript
 import createMiddleware from 'redux-json-schema-middleware';
 const middleware = createMiddleware({
-  actionsSchema: { }  // Schema that will be used to validate all actions
+  actionSchema: { }  // Schema that will be used to validate all actions
 });
 ```
