@@ -1,5 +1,5 @@
-import createMiddleware from '.';
-import { emptyStore, noopNext } from './testUtils';
+import createMiddleware, { ValidationError } from '.';
+import { catchError, emptyStore, noopNext } from './testUtils';
 
 const middleware = createMiddleware({
   perActionSchemas: {
@@ -18,10 +18,22 @@ describe('per-action schemas', () => {
     }).not.toThrow();
   });
 
-  it('raises an error for invalid actions', () => {
+  it('throws an error for invalid actions', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)({ type: 'invalid' });
-    }).toThrow(/data should have required property '\.test'/);
+    }).toThrow();
+  });
+
+  it('throws a ValidationError', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)({ type: 'invalid' });
+    })).toBeInstanceOf(ValidationError);
+  });
+
+  it('provides validation information', () => {
+    expect(() => {
+      middleware(emptyStore)(noopNext)({ type: 'invalid' });
+    }).toThrow("data should have required property '.test'");
   });
 
   it('allows unknown actions', () => {

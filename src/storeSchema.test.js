@@ -1,5 +1,5 @@
-import createMiddleware from '.';
-import { createStore, noopNext, testAction } from './testUtils';
+import createMiddleware, { ValidationError } from '.';
+import { catchError, createStore, noopNext, testAction } from './testUtils';
 
 const middleware = createMiddleware({
   storeSchema: {
@@ -14,9 +14,21 @@ describe('store schema', () => {
     }).not.toThrow();
   });
 
-  it('raises an error for invalid stores', () => {
+  it('throws an error for invalid stores', () => {
     expect(() => {
       middleware(createStore('notobject'))(noopNext)(testAction);
-    }).toThrow(/data should be object/);
+    }).toThrow();
+  });
+
+  it('throws a ValidationError', () => {
+    expect(catchError(() => {
+      middleware(createStore('notobject'))(noopNext)(testAction);
+    })).toBeInstanceOf(ValidationError);
+  });
+
+  it('provides validation information', () => {
+    expect(() => {
+      middleware(createStore('notobject'))(noopNext)(testAction);
+    }).toThrow('data should be object');
   });
 });
