@@ -1,4 +1,4 @@
-export const fluxStandardActionSchema = {
+export default {
   type: 'object',
   required: ['type'],
   properties: {

@@ -1,12 +1,12 @@
 import Ajv from 'ajv';
 
-import { fluxStandardActionSchema } from './defaults';
+import fsaSchema from './fsaSchema';
 
 export default (config = { }) => {
   config.perActionSchemas = config.perActionSchemas || { };
 
   const ajv = new Ajv();
-  ajv.addSchema(fluxStandardActionSchema, 'fluxStandardAction');
+  ajv.addSchema(fsaSchema, 'FSA');
   config.actionSchema && ajv.addSchema(config.actionSchema, 'action');
   config.storeSchema && ajv.addSchema(config.storeSchema, 'store');
   Object.keys(config.perActionSchemas).forEach(type => {
@@ -29,8 +29,8 @@ export default (config = { }) => {
   return store => next => action => {
     if (config.fluxStandardAction) {
       validate(
-        'fluxStandardAction',
-        fluxStandardActionSchema,
+        'FSA',
+        fsaSchema,
         'action',
         action
       );
