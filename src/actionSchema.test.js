@@ -10,7 +10,9 @@ const middleware = createMiddleware({
 
 describe('action schema', () => {
   it('raises an error for invalid actions', () => {
-    expect(() => { middleware(emptyStore)(noopNext)(testAction); }).toThrow();
+    expect(() => { middleware(emptyStore)(noopNext)(testAction); }).toThrow(
+      "redux-json-schema-middleware: action error using schema 'action'"
+    );
   });
 
   it('provides validation information', () => {

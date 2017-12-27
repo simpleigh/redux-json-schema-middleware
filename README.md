@@ -141,7 +141,7 @@ try {
   store.dispatch({ type: 'test' });
 } catch (e) {
   // Message describing the validation error
-  e.message;  // "data should have required property '.test'"
+  e.message;  // "redux-json-schema-middleware: action error using schema 'action'"
 
   // Text describing the validation error
   e.errorText;  // "data should have required property '.test'"

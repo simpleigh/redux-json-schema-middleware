@@ -7,7 +7,9 @@ describe('flux standard action schema', () => {
   it('throws an error for invalid actions', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)(undefined);
-    }).toThrow();
+    }).toThrow(
+      "redux-json-schema-middleware: action error using schema 'FSA'"
+    );
   });
 
   it('provides validation information', () => {

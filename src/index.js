@@ -16,8 +16,8 @@ export default (config = { }) => {
   const validate = (schema, data, objectType) => {
     const isValid = ajv.getSchema(schema);
     if (isValid && !isValid(data)) {
-      const error = new Error(
-        `redux-json-schema-middleware: ${objectType} did not validate`
+      const error = new Error('redux-json-schema-middleware: ' +
+        `${objectType} error using schema '${schema}'`
       );
       error.errorText = ajv.errorsText(isValid.errors);
       error.object = data;

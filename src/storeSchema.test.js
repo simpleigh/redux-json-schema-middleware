@@ -17,7 +17,9 @@ describe('store schema', () => {
   it('throws an error for invalid stores', () => {
     expect(() => {
       middleware(createStore('notobject'))(noopNext)(testAction);
-    }).toThrow();
+    }).toThrow(
+      "redux-json-schema-middleware: store error using schema 'store'"
+    );
   });
 
   it('provides validation information', () => {

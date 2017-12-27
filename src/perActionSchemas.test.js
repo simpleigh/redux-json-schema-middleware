@@ -21,7 +21,9 @@ describe('per-action schemas', () => {
   it('throws an error for invalid actions', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)({ type: 'invalid' });
-    }).toThrow();
+    }).toThrow(
+      "redux-json-schema-middleware: action error using schema 'action/invalid'"
+    );
   });
 
   it('provides validation information', () => {
