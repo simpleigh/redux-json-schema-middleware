@@ -39,6 +39,12 @@ describe('store schema', () => {
     }).object).toBe(store.getState());
   });
 
+  it('provides the failed object type (store)', () => {
+    expect(catchError(() => {
+      middleware(createStore('notobject'))(noopNext)(testAction);
+    }).objectType).toBe('store');
+  });
+
   it('provides the failed schema', () => {
     expect(catchError(() => {
       middleware(createStore('notobject'))(noopNext)(testAction);

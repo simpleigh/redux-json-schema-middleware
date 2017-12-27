@@ -32,6 +32,12 @@ describe('action schema', () => {
     }).object).toBe(action);
   });
 
+  it('provides the failed object type (action)', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)(testAction);
+    }).objectType).toBe('action');
+  });
+
   it('provides the failed schema', () => {
     expect(catchError(() => {
       middleware(emptyStore)(noopNext)(testAction);

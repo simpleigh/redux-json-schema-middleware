@@ -140,10 +140,16 @@ These contain additional information about the error that occurred:
 try {
   store.dispatch({ type: 'test' });
 } catch (e) {
-  // A message describing the validation error
-  e.message;  // "data should have required property '.required'"
+  // Message describing the validation error
+  e.message;  // "data should have required property '.test'"
 
-  // The object that failed validation
+  // Object that failed validation
   e.object;  // { type: 'test' }
+
+  // Type of the object that failed validation (action or store)
+  e.objectType;  // 'action'
+
+  // Schema used to validate the object
+  e.schema;  // { type: 'object', required: [ 'type', 'test' ]. }
 }
 ```

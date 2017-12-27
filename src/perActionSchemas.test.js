@@ -43,6 +43,12 @@ describe('per-action schemas', () => {
     }).object).toBe(action);
   });
 
+  it('provides the failed object type (action)', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)({ type: 'invalid' });
+    }).objectType).toBe('action');
+  });
+
   it('provides the failed schema', () => {
     expect(catchError(() => {
       middleware(emptyStore)(noopNext)({ type: 'invalid' });
