@@ -3,41 +3,36 @@ import Ajv from 'ajv';
 import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
 export default (config = { }) => {
+  config.actionSchema = config.actionSchema || { };
+  config.perActionSchemas = config.perActionSchemas || { };
+  config.storeSchema = config.storeSchema || { };
+
   const ajv = new Ajv();
-
-  ajv.addSchema(standardActionSchema, 'standardActionSchema');
-  ajv.addSchema(fluxStandardActionSchema, 'fluxStandardActionSchema');
-  ajv.addSchema(config.actionSchema || { }, 'actionSchema');
-  ajv.addSchema(config.storeSchema || { }, 'storeSchema');
-
-  for (let type in config.perActionSchemas) {
+  ajv.addSchema(standardActionSchema, 'standardAction');
+  ajv.addSchema(fluxStandardActionSchema, 'fluxStandardAction');
+  ajv.addSchema(config.actionSchema, 'action');
+  Object.keys(config.perActionSchemas).forEach(type => {
     ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
-  }
+  });
+  ajv.addSchema(config.storeSchema, 'store');
+
+  const validate = (schema, data) => {
+    if (!ajv.validate(schema, data)) {
+      throw new Error(ajv.errorsText(ajv.errors));
+    }
+  };
 
   return store => next => action => {
     if (config.fluxStandardAction) {
-      if (!ajv.validate('fluxStandardActionSchema', action)) {
-        throw new Error(ajv.errorsText(ajv.errors));
-      }
+      validate('fluxStandardAction', action);
     } else {
-      if (!ajv.validate('standardActionSchema', action)) {
-        throw new Error(ajv.errorsText(ajv.errors));
-      }
+      validate('standardAction', action);
     }
 
-    if (config.actionSchema && !ajv.validate('actionSchema', action)) {
-      throw new Error(ajv.errorsText(ajv.errors));
-    }
-
-    if (config.perActionSchemas && config.perActionSchemas[action.type]) {
-      if (!ajv.validate(`action/${action.type}`, action)) {
-        throw new Error(ajv.errorsText(ajv.errors));
-      }
-    }
-
-    if (config.storeSchema && !ajv.validate('storeSchema', store.getState())) {
-      throw new Error(ajv.errorsText(ajv.errors));
-    }
+    config.actionSchema && validate('action', action);
+    config.perActionSchemas[action.type] &&
+      validate(`action/${action.type}`, action);
+    config.storeSchema && validate('store', store.getState());
 
     return next(action);
   };
