@@ -2,6 +2,13 @@ import Ajv from 'ajv';
 
 import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
+export class ValidationError extends Error {
+  constructor(errors, ...params) {
+    super(Ajv.prototype.errorsText(errors), ...params);
+    Error.captureStackTrace && Error.captureStackTrace(this, ValidationError);
+  }
+}
+
 export default (config = { }) => {
   config.actionSchema = config.actionSchema || { };
   config.perActionSchemas = config.perActionSchemas || { };
@@ -18,7 +25,7 @@ export default (config = { }) => {
 
   const validate = (schema, data) => {
     if (!ajv.validate(schema, data)) {
-      throw new Error(ajv.errorsText(ajv.errors));
+      throw new ValidationError(ajv.errors);
     }
   };
 
