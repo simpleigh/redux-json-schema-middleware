@@ -1,5 +1,5 @@
 import createMiddleware from '.';
-import { emptyStore, noopNext } from './testUtils';
+import { catchError, emptyStore, noopNext } from './testUtils';
 
 const middleware = createMiddleware({
   perActionSchemas: {
@@ -18,10 +18,35 @@ describe('per-action schemas', () => {
     }).not.toThrow();
   });
 
-  it('raises an error for invalid actions', () => {
+  it('throws an error for invalid actions', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)({ type: 'invalid' });
-    }).toThrow(/data should have required property '\.test'/);
+    }).toThrow();
+  });
+
+  it('provides validation information', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)({ type: 'invalid' });
+    }).errorText).toBe("data should have required property '.test'");
+  });
+
+  it('provides the failed object', () => {
+    const action = { type: 'invalid' };
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)(action);
+    }).object).toBe(action);
+  });
+
+  it('provides the failed object type (action)', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)({ type: 'invalid' });
+    }).objectType).toBe('action');
+  });
+
+  it('provides the failed schema', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)({ type: 'invalid' });
+    }).schema).toHaveProperty('type', 'object');
   });
 
   it('allows unknown actions', () => {

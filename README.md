@@ -130,3 +130,29 @@ A schema that will be used to validate the store itself.
   }
 }
 ```
+
+### Error API
+
+Any validation errors cause an error to be thrown.
+These contain additional information about the error that occurred:
+
+```javascript
+try {
+  store.dispatch({ type: 'test' });
+} catch (e) {
+  // Message describing the validation error
+  e.message;  // "data should have required property '.test'"
+
+  // Text describing the validation error
+  e.errorText;  // "data should have required property '.test'"
+
+  // Object that failed validation
+  e.object;  // { type: 'test' }
+
+  // Type of the object that failed validation (action or store)
+  e.objectType;  // 'action'
+
+  // Schema used to validate the object
+  e.schema;  // { type: 'object', required: [ 'type', 'test' ]. }
+}
+```

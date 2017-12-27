@@ -1,5 +1,5 @@
 import createMiddleware from '.';
-import { createStore, noopNext, testAction } from './testUtils';
+import { catchError, createStore, noopNext, testAction } from './testUtils';
 
 const middleware = createMiddleware({
   storeSchema: {
@@ -14,9 +14,34 @@ describe('store schema', () => {
     }).not.toThrow();
   });
 
-  it('raises an error for invalid stores', () => {
+  it('throws an error for invalid stores', () => {
     expect(() => {
       middleware(createStore('notobject'))(noopNext)(testAction);
-    }).toThrow(/data should be object/);
+    }).toThrow();
+  });
+
+  it('provides validation information', () => {
+    expect(catchError(() => {
+      middleware(createStore('notobject'))(noopNext)(testAction);
+    }).errorText).toBe('data should be object');
+  });
+
+  it('provides the failed object', () => {
+    const store = createStore('notobject');
+    expect(catchError(() => {
+      middleware(store)(noopNext)(testAction);
+    }).object).toBe(store.getState());
+  });
+
+  it('provides the failed object type (store)', () => {
+    expect(catchError(() => {
+      middleware(createStore('notobject'))(noopNext)(testAction);
+    }).objectType).toBe('store');
+  });
+
+  it('provides the failed schema', () => {
+    expect(catchError(() => {
+      middleware(createStore('notobject'))(noopNext)(testAction);
+    }).schema).toHaveProperty('type', 'object');
   });
 });
