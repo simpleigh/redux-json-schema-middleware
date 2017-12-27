@@ -33,6 +33,10 @@ The middleware also supports validation of actions.
 
 See also the [tutorial](TUTORIAL.md) for a fuller introduction.
 
+JSON Schema validation is performed using
+[Ajv](http://epoberezkin.github.io/ajv/).
+For schema keyword reference see http://epoberezkin.github.io/ajv/keywords.html.
+
 ### Installation
 
 Install using `npm` or [`yarn`](https://yarnpkg.com/).
