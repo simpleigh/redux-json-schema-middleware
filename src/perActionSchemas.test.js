@@ -36,6 +36,13 @@ describe('per-action schemas', () => {
     }).toThrow("data should have required property '.test'");
   });
 
+  it('provides the failed object', () => {
+    const action = { type: 'invalid' };
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)(action);
+    }).object).toBe(action);
+  });
+
   it('allows unknown actions', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)({ type: 'unknown' });

@@ -22,6 +22,13 @@ describe('standard action schema', () => {
     }).toThrow('data should be object');
   });
 
+  it('provides the failed object', () => {
+    const action = 'notaction';
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)(action);
+    }).object).toBe(action);
+  });
+
   it('expects actions to be objects', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)('notaction');

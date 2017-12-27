@@ -3,9 +3,10 @@ import Ajv from 'ajv';
 import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
 export class ValidationError extends Error {
-  constructor(errors, ...params) {
+  constructor(data, errors, ...params) {
     super(Ajv.prototype.errorsText(errors), ...params);
     Error.captureStackTrace && Error.captureStackTrace(this, ValidationError);
+    this.object = data;
   }
 }
 
@@ -25,7 +26,7 @@ export default (config = { }) => {
 
   const validate = (schema, data) => {
     if (!ajv.validate(schema, data)) {
-      throw new ValidationError(ajv.errors);
+      throw new ValidationError(data, ajv.errors);
     }
   };
 

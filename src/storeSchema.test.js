@@ -31,4 +31,11 @@ describe('store schema', () => {
       middleware(createStore('notobject'))(noopNext)(testAction);
     }).toThrow('data should be object');
   });
+
+  it('provides the failed object', () => {
+    const store = createStore('notobject');
+    expect(catchError(() => {
+      middleware(store)(noopNext)(action);
+    }).object).toBe(store.getState());
+  });
 });

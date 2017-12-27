@@ -24,4 +24,11 @@ describe('action schema', () => {
       middleware(emptyStore)(noopNext)(testAction);
     }).toThrow("data should have required property '.required'");
   });
+
+  it('provides the failed object', () => {
+    const action = 'notaction';
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)(action);
+    }).object).toBe(action);
+  });
 });

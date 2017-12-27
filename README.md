@@ -130,3 +130,20 @@ A schema that will be used to validate the store itself.
   }
 }
 ```
+
+### Error API
+
+Any validation errors are thrown as `ValidationError` objects.
+These contain additional information about the error that occurred:
+
+```javascript
+try {
+  store.dispatch({ type: 'test' });
+} catch (e) {
+  e.message;  // A message describing the validation error
+  // "data should have required property '.required'"
+
+  e.object;  // The object that failed validation
+  // { type: 'test' }
+}
+```
