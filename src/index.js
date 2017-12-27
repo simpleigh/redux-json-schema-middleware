@@ -6,57 +6,35 @@ export default (config = { }) => {
   config.perActionSchemas = config.perActionSchemas || { };
 
   const ajv = new Ajv();
-  ajv.addSchema(fsaSchema, 'FSA');
+  config.fluxStandardAction && ajv.addSchema(fsaSchema, 'FSA');
   config.actionSchema && ajv.addSchema(config.actionSchema, 'action');
   config.storeSchema && ajv.addSchema(config.storeSchema, 'store');
   Object.keys(config.perActionSchemas).forEach(type => {
     ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
   });
 
-  const validate = (schemaName, schemaObject, objectType, data) => {
-    if (schemaObject && !ajv.validate(schemaName, data)) {
+  const validate = (schema, data, objectType) => {
+    const isValid = ajv.getSchema(schema);
+    if (isValid && !isValid(data)) {
       const error = new Error(
         `redux-json-schema-middleware: ${objectType} did not validate`
       );
-      error.errorText = ajv.errorsText(ajv.errors);
+      error.errorText = ajv.errorsText(isValid.errors);
       error.object = data;
       error.objectType = objectType;
-      error.schema = schemaObject;
+      error.schema = isValid.schema;
       throw error;
     }
   };
 
+  const validateAction = (schema, data) => validate(schema, data, 'action');
+  const validateStore = (schema, data) => validate(schema, data, 'store');
+
   return store => next => action => {
-    if (config.fluxStandardAction) {
-      validate(
-        'FSA',
-        fsaSchema,
-        'action',
-        action
-      );
-    }
-
-    validate(
-      'action',
-      config.actionSchema,
-      'action',
-      action
-    );
-
-    validate(
-      `action/${action.type}`,
-      config.perActionSchemas[action.type],
-      'action',
-      action
-    );
-
-    validate(
-      'store',
-      config.storeSchema,
-      'store',
-      store.getState()
-    );
-
+    validateAction('FSA', action);
+    validateAction('action', action);
+    validateAction(`action/${action.type}`, action);
+    validateStore('store', store.getState());
     return next(action);
   };
 };
