@@ -3,10 +3,11 @@ import Ajv from 'ajv';
 import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
 export class ValidationError extends Error {
-  constructor(data, errors, ...params) {
+  constructor(data, schemaObject, errors, ...params) {
     super(Ajv.prototype.errorsText(errors), ...params);
     Error.captureStackTrace && Error.captureStackTrace(this, ValidationError);
     this.object = data;
+    this.schema = schemaObject;
   }
 }
 
@@ -24,23 +25,32 @@ export default (config = { }) => {
   });
   ajv.addSchema(config.storeSchema, 'store');
 
-  const validate = (schema, data) => {
-    if (!ajv.validate(schema, data)) {
-      throw new ValidationError(data, ajv.errors);
+  const validate = (schemaName, schemaObject, data) => {
+    if (!ajv.validate(schemaName, data)) {
+      throw new ValidationError(data, schemaObject, ajv.errors);
     }
   };
 
   return store => next => action => {
     if (config.fluxStandardAction) {
-      validate('fluxStandardAction', action);
+      validate('fluxStandardAction', fluxStandardActionSchema, action);
     } else {
-      validate('standardAction', action);
+      validate('standardAction', standardActionSchema, action);
     }
 
-    config.actionSchema && validate('action', action);
-    config.perActionSchemas[action.type] &&
-      validate(`action/${action.type}`, action);
-    config.storeSchema && validate('store', store.getState());
+    config.actionSchema && validate('action', config.actionSchema, action);
+
+    config.perActionSchemas[action.type] && validate(
+      `action/${action.type}`,
+      config.perActionSchemas[action.type],
+      action
+    );
+
+    config.storeSchema && validate(
+      'store',
+      config.storeSchema,
+      store.getState()
+    );
 
     return next(action);
   };

@@ -43,6 +43,12 @@ describe('per-action schemas', () => {
     }).object).toBe(action);
   });
 
+  it('provides the failed schema', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)({ type: 'invalid' });
+    }).schema).toHaveProperty('type', 'object');
+  });
+
   it('allows unknown actions', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)({ type: 'unknown' });

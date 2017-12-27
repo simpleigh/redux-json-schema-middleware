@@ -31,4 +31,10 @@ describe('action schema', () => {
       middleware(emptyStore)(noopNext)(action);
     }).object).toBe(action);
   });
+
+  it('provides the failed schema', () => {
+    expect(catchError(() => {
+      middleware(emptyStore)(noopNext)(testAction);
+    }).schema).toHaveProperty('type', 'object');
+  });
 });

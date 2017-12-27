@@ -38,4 +38,10 @@ describe('store schema', () => {
       middleware(store)(noopNext)(testAction);
     }).object).toBe(store.getState());
   });
+
+  it('provides the failed schema', () => {
+    expect(catchError(() => {
+      middleware(createStore('notobject'))(noopNext)(testAction);
+    }).schema).toHaveProperty('type', 'object');
+  });
 });
