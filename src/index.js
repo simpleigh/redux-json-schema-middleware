@@ -3,21 +3,19 @@ import Ajv from 'ajv';
 import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
 export default (config = { }) => {
-  config.actionSchema = config.actionSchema || { };
   config.perActionSchemas = config.perActionSchemas || { };
-  config.storeSchema = config.storeSchema || { };
 
   const ajv = new Ajv();
   ajv.addSchema(standardActionSchema, 'standardAction');
   ajv.addSchema(fluxStandardActionSchema, 'fluxStandardAction');
-  ajv.addSchema(config.actionSchema, 'action');
+  config.actionSchema && ajv.addSchema(config.actionSchema, 'action');
+  config.storeSchema && ajv.addSchema(config.storeSchema, 'store');
   Object.keys(config.perActionSchemas).forEach(type => {
     ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
   });
-  ajv.addSchema(config.storeSchema, 'store');
 
   const validate = (schemaName, schemaObject, objectType, data) => {
-    if (!ajv.validate(schemaName, data)) {
+    if (schemaObject && !ajv.validate(schemaName, data)) {
       const error = new Error(
         `redux-json-schema-middleware: ${objectType} did not validate`
       );
@@ -46,21 +44,21 @@ export default (config = { }) => {
       );
     }
 
-    config.actionSchema && validate(
+    validate(
       'action',
       config.actionSchema,
       'action',
       action
     );
 
-    config.perActionSchemas[action.type] && validate(
+    validate(
       `action/${action.type}`,
       config.perActionSchemas[action.type],
       'action',
       action
     );
 
-    config.storeSchema && validate(
+    validate(
       'store',
       config.storeSchema,
       'store',
