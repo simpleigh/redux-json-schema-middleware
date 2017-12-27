@@ -2,20 +2,6 @@ import Ajv from 'ajv';
 
 import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
-export class ValidationError extends Error {
-  constructor(object, objectType, schemaObject, errors, ...params) {
-    super(
-      `redux-json-schema-middleware: ${objectType} did not validate`,
-      ...params
-    );
-    Error.captureStackTrace && Error.captureStackTrace(this, ValidationError);
-    this.errorText = Ajv.prototype.errorsText(errors);
-    this.object = object;
-    this.objectType = objectType;
-    this.schema = schemaObject;
-  }
-}
-
 export default (config = { }) => {
   config.actionSchema = config.actionSchema || { };
   config.perActionSchemas = config.perActionSchemas || { };
@@ -32,7 +18,14 @@ export default (config = { }) => {
 
   const validate = (schemaName, schemaObject, objectType, data) => {
     if (!ajv.validate(schemaName, data)) {
-      throw new ValidationError(data, objectType, schemaObject, ajv.errors);
+      const error = new Error(
+        `redux-json-schema-middleware: ${objectType} did not validate`
+      );
+      error.errorText = ajv.errorsText(ajv.errors);
+      error.object = data;
+      error.objectType = objectType;
+      error.schema = schemaObject;
+      throw error;
     }
   };
 

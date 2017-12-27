@@ -133,7 +133,7 @@ A schema that will be used to validate the store itself.
 
 ### Error API
 
-Any validation errors are thrown as `ValidationError` objects.
+Any validation errors cause an error to be thrown.
 These contain additional information about the error that occurred:
 
 ```javascript

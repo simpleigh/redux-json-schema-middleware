@@ -1,4 +1,4 @@
-import createMiddleware, { ValidationError } from '.';
+import createMiddleware from '.';
 import { catchError, emptyStore, noopNext } from './testUtils';
 
 const middleware = createMiddleware({ fluxStandardAction: true });
@@ -8,12 +8,6 @@ describe('flux standard action schema', () => {
     expect(() => {
       middleware(emptyStore)(noopNext)(undefined);
     }).toThrow();
-  });
-
-  it('throws a ValidationError', () => {
-    expect(catchError(() => {
-      middleware(emptyStore)(noopNext)(undefined);
-    })).toBeInstanceOf(ValidationError);
   });
 
   it('provides validation information', () => {

@@ -1,4 +1,4 @@
-import createMiddleware, { ValidationError } from '.';
+import createMiddleware from '.';
 import { catchError, createStore, noopNext, testAction } from './testUtils';
 
 const middleware = createMiddleware({
@@ -18,12 +18,6 @@ describe('store schema', () => {
     expect(() => {
       middleware(createStore('notobject'))(noopNext)(testAction);
     }).toThrow();
-  });
-
-  it('throws a ValidationError', () => {
-    expect(catchError(() => {
-      middleware(createStore('notobject'))(noopNext)(testAction);
-    })).toBeInstanceOf(ValidationError);
   });
 
   it('provides validation information', () => {
