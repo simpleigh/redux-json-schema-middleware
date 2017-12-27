@@ -2,17 +2,47 @@ import Ajv from 'ajv';
 
 import fsaSchema from './fsaSchema';
 
+/**
+ * A JSON schema
+ * @typedef {Object} Schema
+ */
+
+/**
+ * Middleware configuration
+ * @typedef {Object} Config
+ * @property {Schema}                  actionSchema
+ * @property {boolean}                 fluxStandardAction
+ * @property {Object.<string, Schema>} perActionSchemas
+ * @property {Schema}                  storeSchema
+ */
+
+/**
+ * Middleware factory
+ * @param {Config} [config]
+ * @returns {function(store)} Middleware
+ */
 export default (config = { }) => {
   config.perActionSchemas = config.perActionSchemas || { };
 
+  /**
+   * Ajv validation object
+   * @type {Ajv}
+   */
   const ajv = new Ajv();
-  config.fluxStandardAction && ajv.addSchema(fsaSchema, 'FSA');
-  config.actionSchema && ajv.addSchema(config.actionSchema, 'action');
-  config.storeSchema && ajv.addSchema(config.storeSchema, 'store');
+  config.fluxStandardAction && ajv.addSchema(fsaSchema,           'FSA');
+  config.actionSchema       && ajv.addSchema(config.actionSchema, 'action');
+  config.storeSchema        && ajv.addSchema(config.storeSchema,  'store');
   Object.keys(config.perActionSchemas).forEach(type => {
     ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
   });
 
+  /**
+   * Validate an object against a schema
+   * @param {string} schema     - Key for schema to use to validate the object
+   * @param {Object} data       - Object to validate
+   * @param {string} objectType - Type of the object (action or store)
+   * @throws {Error} if the object does not validate against the schema
+   */
   const validate = (schema, data, objectType) => {
     const isValid = ajv.getSchema(schema);
     if (isValid && !isValid(data)) {
@@ -27,12 +57,23 @@ export default (config = { }) => {
     }
   };
 
+  /**
+   * Validate an action
+   * @param {string} schema - Key for schema to use to validate the object
+   * @param {Object} data   - Object to validate
+   */
   const validateAction = (schema, data) => validate(schema, data, 'action');
+
+  /**
+   * Validate the store
+   * @param {string} schema - Key for schema to use to validate the object
+   * @param {Object} data   - Object to validate
+   */
   const validateStore = (schema, data) => validate(schema, data, 'store');
 
   return store => next => action => {
-    validateAction('FSA', action);
-    validateAction('action', action);
+    validateAction('FSA',                   action);
+    validateAction('action',                action);
     validateAction(`action/${action.type}`, action);
     validateStore('store', store.getState());
     return next(action);
