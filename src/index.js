@@ -81,7 +81,8 @@ export default (config = { }) => {
     validateAction('FSA',                   action);
     validateAction('action',                action);
     validateAction(`action/${action.type}`, action);
+    const result = next(action)
     validateStore('store', store.getState());
-    return next(action);
+    return result;
   };
 };

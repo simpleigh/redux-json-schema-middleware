@@ -46,4 +46,19 @@ describe('store schema', () => {
       middleware(createStore('notobject'))(noopNext)(testAction);
     }).schema).toHaveProperty('type', 'object');
   });
+
+  it('calls next() before calling getState()', () => {
+    let nextCalled = false;
+    const next = jest.fn(() => { nextCalled = true; });
+
+    const getState = jest.fn(() => {
+      if (!nextCalled) {
+        fail();
+      }
+      return { };
+    });
+    const store = { getState };
+
+    middleware(store)(next)(testAction);
+  });
 });
