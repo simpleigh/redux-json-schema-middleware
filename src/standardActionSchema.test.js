@@ -17,9 +17,9 @@ describe('standard action schema', () => {
   });
 
   it('provides validation information', () => {
-    expect(() => {
+    expect(catchError(() => {
       middleware(emptyStore)(noopNext)(undefined);
-    }).toThrow('data should be object');
+    }).errorText).toBe('data should be object');
   });
 
   it('provides the failed object', () => {
@@ -42,20 +42,20 @@ describe('standard action schema', () => {
   });
 
   it('expects actions to be objects', () => {
-    expect(() => {
+    expect(catchError(() => {
       middleware(emptyStore)(noopNext)('notaction');
-    }).toThrow('data should be object');
+    }).errorText).toBe('data should be object');
   });
 
   it('expects actions to have a type', () => {
-    expect(() => {
+    expect(catchError(() => {
       middleware(emptyStore)(noopNext)({ });
-    }).toThrow("data should have required property 'type'");
+    }).errorText).toBe("data should have required property 'type'");
   });
 
   it('expects the type to be a string', () => {
-    expect(() => {
+    expect(catchError(() => {
       middleware(emptyStore)(noopNext)({ type: { } });
-    }).toThrow('data.type should be string');
+    }).errorText).toBe('data.type should be string');
   });
 });

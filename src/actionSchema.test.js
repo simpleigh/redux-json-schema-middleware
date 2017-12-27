@@ -20,9 +20,9 @@ describe('action schema', () => {
   });
 
   it('provides validation information', () => {
-    expect(() => {
+    expect(catchError(() => {
       middleware(emptyStore)(noopNext)(testAction);
-    }).toThrow("data should have required property '.required'");
+    }).errorText).toBe("data should have required property '.required'");
   });
 
   it('provides the failed object', () => {

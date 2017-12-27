@@ -31,9 +31,9 @@ describe('per-action schemas', () => {
   });
 
   it('provides validation information', () => {
-    expect(() => {
+    expect(catchError(() => {
       middleware(emptyStore)(noopNext)({ type: 'invalid' });
-    }).toThrow("data should have required property '.test'");
+    }).errorText).toBe("data should have required property '.test'");
   });
 
   it('provides the failed object', () => {

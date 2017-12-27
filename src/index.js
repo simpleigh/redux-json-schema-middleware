@@ -4,8 +4,12 @@ import { standardActionSchema, fluxStandardActionSchema } from './defaults';
 
 export class ValidationError extends Error {
   constructor(object, objectType, schemaObject, errors, ...params) {
-    super(Ajv.prototype.errorsText(errors), ...params);
+    super(
+      `redux-json-schema-middleware: ${objectType} did not validate`,
+      ...params
+    );
     Error.captureStackTrace && Error.captureStackTrace(this, ValidationError);
+    this.errorText = Ajv.prototype.errorsText(errors);
     this.object = object;
     this.objectType = objectType;
     this.schema = schemaObject;

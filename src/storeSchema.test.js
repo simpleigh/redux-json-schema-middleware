@@ -27,9 +27,9 @@ describe('store schema', () => {
   });
 
   it('provides validation information', () => {
-    expect(() => {
+    expect(catchError(() => {
       middleware(createStore('notobject'))(noopNext)(testAction);
-    }).toThrow('data should be object');
+    }).errorText).toBe('data should be object');
   });
 
   it('provides the failed object', () => {

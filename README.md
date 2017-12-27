@@ -143,6 +143,9 @@ try {
   // Message describing the validation error
   e.message;  // "data should have required property '.test'"
 
+  // Text describing the validation error
+  e.errorText;  // "data should have required property '.test'"
+
   // Object that failed validation
   e.object;  // { type: 'test' }
 
