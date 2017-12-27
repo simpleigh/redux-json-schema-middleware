@@ -3,6 +3,7 @@
     "env",
     {
       "targets": {
+        "browsers": ["IE 10", "Firefox >= 52", "Chrome >= 63"],
         "node": "4"
       }
     }

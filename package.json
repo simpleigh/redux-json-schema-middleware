@@ -23,7 +23,7 @@
     "url": "git+https://github.com/simpleigh/redux-json-schema-middleware.git"
   },
   "scripts": {
-    "build": "babel src -d dist",
+    "build": "babel src --out-dir dist --ignore test.js,testUtils.js",
     "test": "jest --coverage",
     "coverage": "codecov"
   },
