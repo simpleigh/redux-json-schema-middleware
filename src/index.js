@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 
+import configSchema from './configSchema';
 import fsaSchema from './fsaSchema';
 
 /**
@@ -22,25 +23,17 @@ import fsaSchema from './fsaSchema';
  * @returns {function(store)} Middleware
  */
 export default (config = { }) => {
-  config.perActionSchemas = config.perActionSchemas || { };
-
   /**
    * Ajv validation object
    * @type {Ajv}
    */
   const ajv = new Ajv();
-  config.fluxStandardAction && ajv.addSchema(fsaSchema,           'FSA');
-  config.actionSchema       && ajv.addSchema(config.actionSchema, 'action');
-  config.storeSchema        && ajv.addSchema(config.storeSchema,  'store');
-  Object.keys(config.perActionSchemas).forEach(type => {
-    ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
-  });
 
   /**
    * Validate an object against a schema
    * @param {string} schema     - Key for schema to use to validate the object
    * @param {Object} data       - Object to validate
-   * @param {string} objectType - Type of the object (action or store)
+   * @param {string} objectType - Type of the object (action, config or store)
    * @throws {Error} if the object does not validate against the schema
    */
   const validate = (schema, data, objectType) => {
@@ -71,6 +64,19 @@ export default (config = { }) => {
    */
   const validateStore = (schema, data) => validate(schema, data, 'store');
 
+  // Validate configuration data
+  ajv.addSchema(configSchema, 'config');
+  validate('config', config, 'config');
+
+  // Add remaining schemas
+  config.fluxStandardAction && ajv.addSchema(fsaSchema,           'FSA');
+  config.actionSchema       && ajv.addSchema(config.actionSchema, 'action');
+  config.storeSchema        && ajv.addSchema(config.storeSchema,  'store');
+  Object.keys(config.perActionSchemas || { }).forEach(type => {
+    ajv.addSchema(config.perActionSchemas[type], `action/${type}`);
+  });
+
+  // Return the middleware
   return store => next => action => {
     validateAction('FSA',                   action);
     validateAction('action',                action);
