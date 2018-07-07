@@ -64,4 +64,15 @@ describe('config schema', () => {
       createMiddleware({ storeSchema: 'notobject' });
     }).toThrow();
   });
+
+  it('allows to pass custom ajv instance', () => {
+    expect(() => {
+      const middleware = createMiddleware({
+        ajv: new Ajv({
+          allErrors: true
+        })
+      });
+      expect(middleware).toBeDefined();
+    }).not.toThrow();
+  });
 });

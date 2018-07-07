@@ -27,7 +27,7 @@ export default (config = { }) => {
    * Ajv validation object
    * @type {Ajv}
    */
-  const ajv = new Ajv();
+  const ajv = config.ajv || new Ajv();
 
   /**
    * Validate an object against a schema
