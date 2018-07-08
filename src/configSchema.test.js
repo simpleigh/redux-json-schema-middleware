@@ -1,3 +1,4 @@
+import Ajv from 'ajv';
 import createMiddleware from '.';
 import { catchError } from './testUtils';
 
