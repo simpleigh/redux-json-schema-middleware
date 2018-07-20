@@ -1,6 +1,7 @@
 export default {
   type: 'object',
   properties: {
+    ajv: { type: 'object' },
     actionSchema: { type: 'object' },
     fluxStandardAction: {
       type: 'boolean',

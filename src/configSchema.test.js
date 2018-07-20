@@ -1,3 +1,4 @@
+import Ajv from 'ajv';
 import createMiddleware from '.';
 import { catchError } from './testUtils';
 
@@ -63,5 +64,16 @@ describe('config schema', () => {
     expect(() => {
       createMiddleware({ storeSchema: 'notobject' });
     }).toThrow();
+  });
+
+  it('allows to pass custom ajv instance', () => {
+    expect(() => {
+      const middleware = createMiddleware({
+        ajv: new Ajv({
+          allErrors: true
+        })
+      });
+      expect(middleware).toBeDefined();
+    }).not.toThrow();
   });
 });
