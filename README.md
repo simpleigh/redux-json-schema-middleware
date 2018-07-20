@@ -108,6 +108,20 @@ const middleware = createMiddleware({
 An [error](#error-objects) will be thrown if an action doesn't validate against
 the schema.
 
+### `ajv`
+
+A custom instance of [Ajv](http://epoberezkin.github.io/ajv/).
+This allows you to set options, add new formats, etc.
+
+```javascript
+const ajv = new Ajv({ allErrors: true });
+ajv.addFormat('hexstring', /^0x[0-9a-f]+$/i);
+
+const middleware = createMiddleware({
+  ajv,
+});
+```
+
 #### `fluxStandardAction`
 
 Whether actions should be checked for

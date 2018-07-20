@@ -42,6 +42,19 @@ describe('config schema', () => {
     }).toThrow();
   });
 
+  it('expects ajv to be an object', () => {
+    expect(() => {
+      createMiddleware({ ajv: 'notobject' });
+    }).toThrow();
+  });
+
+  it('allows a custom instance of Ajv', () => {
+    const ajv = new Ajv({ allErrors: true });
+    expect(() => {
+      createMiddleware({ ajv });
+    }).not.toThrow();
+  });
+
   it('expects fluxStandardAction to be a boolean', () => {
     expect(() => {
       createMiddleware({ fluxStandardAction: 'notboolean' });
@@ -64,16 +77,5 @@ describe('config schema', () => {
     expect(() => {
       createMiddleware({ storeSchema: 'notobject' });
     }).toThrow();
-  });
-
-  it('allows to pass custom ajv instance', () => {
-    expect(() => {
-      const middleware = createMiddleware({
-        ajv: new Ajv({
-          allErrors: true
-        })
-      });
-      expect(middleware).toBeDefined();
-    }).not.toThrow();
   });
 });
