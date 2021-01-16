@@ -18,7 +18,7 @@ describe('action schema', () => {
   it('provides validation information', () => {
     expect(catchError(() => {
       middleware(emptyStore)(noopNext)(testAction);
-    }).errorText).toBe("data should have required property '.required'");
+    }).errorText).toBe("data should have required property 'required'");
   });
 
   it('provides the failed object', () => {
