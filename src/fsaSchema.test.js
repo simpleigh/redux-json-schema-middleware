@@ -52,7 +52,7 @@ describe('flux standard action schema', () => {
   it('expects the type to be a string', () => {
     expect(catchError(() => {
       middleware(emptyStore)(noopNext)({ type: { } });
-    }).errorText).toBe('data.type should be string');
+    }).errorText).toBe('data/type should be string');
   });
 
   it('allows actions to have certain additional properties', () => {
@@ -64,7 +64,7 @@ describe('flux standard action schema', () => {
 
   it('raises an error for unknown additional properties', () => {
     expect(catchError(() => {
-      middleware(emptyStore)(noopNext)({ unknown: { } });
+      middleware(emptyStore)(noopNext)({ type: 'test', unknown: { } });
     }).errorText).toBe('data should NOT have additional properties');
   });
 });

@@ -23,19 +23,20 @@
     "url": "git+https://github.com/simpleigh/redux-json-schema-middleware.git"
   },
   "scripts": {
-    "build": "babel src --out-dir dist --ignore test.js,testUtils.js",
+    "build": "babel src --out-dir dist --ignore 'src/*.test.js',src/testUtils.js",
     "test": "jest --coverage",
     "coverage": "codecov"
   },
   "dependencies": {
-    "ajv": "6.5.2"
+    "ajv": "^7.0.3"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-core": "6.26.3",
-    "babel-jest": "23.4.0",
-    "babel-preset-env": "1.7.0",
-    "codecov": "3.0.4",
-    "jest": "23.4.1"
-  }
+    "@babel/cli": "7.11.6",
+    "@babel/core": "7.12.10",
+    "@babel/preset-env": "7.12.1",
+    "codecov": "3.8.1",
+    "core-js": "3.8.2",
+    "jest": "26.6.3"
+  },
+  "browserslist": "> 0.25%, not dead"
 }
